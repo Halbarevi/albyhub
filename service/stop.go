@@ -1,0 +1,63 @@
+package service
+
+import (
+	"fmt"
+
+	"github.com/getAlby/hub/events"
+	"github.com/getAlby/hub/logger"
+)
+
+func (svc *service) StopApp() error {
+	// do not allow stopping while a start or stop is already in progress
+	return svc.WithStartLock(func() error {
+		// check under the lock so an in-progress start reports busy
+		// rather than not started
+		if svc.lnClient == nil {
+			return ErrAppNotStarted
+		}
+		svc.stopAppInternal()
+		return nil
+	})
+}
+
+// stopAppInternal must be called while holding the start lock
+func (svc *service) stopAppInternal() {
+	if svc.appCancelFn != nil {
+		logger.Logger.Info("Stopping app...")
+		svc.appCancelFn()
+		svc.wg.Wait()
+		logger.Logger.Info("app stopped")
+	}
+}
+
+func (svc *service) stopLNClient() {
+	svc.lnClientShuttingDown.Store(true)
+	defer func() {
+		svc.lnClientShuttingDown.Store(false)
+		svc.wg.Done()
+	}()
+
+	if svc.lnClient == nil {
+		return
+	}
+	lnClient := svc.lnClient
+	svc.lnClient = nil
+
+	logger.Logger.Info("Shutting down LN client")
+	err := lnClient.Shutdown()
+	if err != nil {
+		logger.Logger.WithError(err).Error("Failed to stop LN client")
+		svc.eventPublisher.Publish(&events.Event{
+			Event: "nwc_node_stop_failed",
+			Properties: map[string]interface{}{
+				"error": fmt.Sprintf("%v", err),
+			},
+		})
+		return
+	}
+	logger.Logger.Info("Publishing node shutdown event")
+	svc.eventPublisher.Publish(&events.Event{
+		Event: "nwc_node_stopped",
+	})
+	logger.Logger.Info("LNClient stopped successfully")
+}

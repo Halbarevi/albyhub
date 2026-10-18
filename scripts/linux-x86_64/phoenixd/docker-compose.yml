@@ -1,0 +1,31 @@
+services:
+  albyhub:
+    platform: linux/amd64
+    container_name: albyhub
+    image: ghcr.io/getalby/hub:latest
+    volumes:
+      - ./albyhub-phoenixd:/data
+    ports:
+      # Bound to 127.0.0.1 so Alby Hub is only reachable from this machine.
+      # To reach it from other devices on your local network use "8080:8080"
+      # and make sure your firewall blocks the port from the internet.
+      # Alby Hub is not intended to be exposed to the public internet.
+      - "127.0.0.1:8080:8080"
+    links:
+      - "albyhub-phoenixd:albyhub-phoenixd"
+    environment:
+      - PHOENIXD_AUTHORIZATION=dcf0cf3501c04f97890e3bb3204f94f60d6b99d270cc8c40dfd390cced2f3c11
+      - PHOENIXD_ADDRESS=http://albyhub-phoenixd:9740
+      - WORK_DIR=/data/albyhub
+      - LN_BACKEND_TYPE=PHOENIX
+    stop_grace_period: 300s
+
+  albyhub-phoenixd:
+    platform: linux/amd64
+    image: ghcr.io/sethforprivacy/phoenixd:latest
+    container_name: albyhub-phoenixd
+    volumes:
+      - ./albyhub-phoenixd:/data
+    environment:
+      - PHOENIX_DATADIR=/data/phoenixd
+    command: --agree-to-terms-of-service --http-bind-ip 0.0.0.0 --http-password=dcf0cf3501c04f97890e3bb3204f94f60d6b99d270cc8c40dfd390cced2f3c11
