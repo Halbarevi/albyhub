@@ -1290,10 +1290,15 @@
   resolved "https://registry.yarnpkg.com/@fontsource-variable/inter/-/inter-5.3.0.tgz#351dd1e02dab63a6cf66d57ec36dcfd10c07f07b"
   integrity sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==
 
-"@getalby/lightning-tools@^8.1.0", "@getalby/lightning-tools@^8.1.1":
+"@getalby/lightning-tools@^8.1.1":
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/@getalby/lightning-tools/-/lightning-tools-8.2.0.tgz#7bcd7c24149f5dfe59e4660aebcda22637d1f207"
   integrity sha512-eL+cnHyzeUARKVzNRuFBRBppAU5RBJOLjhFVzSWt8hDibRzL5+e4hq8I79+RGHfrWWMUDv382Jx8ewOazrBj7w==
+
+"@getalby/lightning-tools@^9.0.1":
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/@getalby/lightning-tools/-/lightning-tools-9.0.1.tgz#8b73c001e4e3598684dab594a1eeed986d9b3d9d"
+  integrity sha512-pTCuJB13V8qq5pDyDSCB5NVxUaT5DmLHLg2jGINYRbU06PM+KXmHoJ3zN9C6Jk31aFil28vsdO6z7OwFhEybLA==
 
 "@getalby/sdk@^8.0.3":
   version "8.0.3"
